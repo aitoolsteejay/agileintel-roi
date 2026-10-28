@@ -324,7 +324,7 @@ export const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({
                 <button
                   type="submit"
                   disabled={status === "submitting"}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl text-base font-bold text-white bg-[#1f4fb4] hover:bg-[#255bd1] border border-blue-400/40 shadow-lg transition-all disabled:opacity-50"
+                  className="btn-tactile w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl text-base font-bold text-white bg-[#1f4fb4] hover:bg-[#255bd1] border border-blue-400/40 shadow-lg transition-all disabled:opacity-50"
                 >
                   <Send className="w-4 h-4" />
                   <span>
