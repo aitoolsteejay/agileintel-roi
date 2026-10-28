@@ -26,13 +26,13 @@ export const Navbar: React.FC = () => {
               }}
               className="flex items-center space-x-3 group"
             >
-              <div className="relative h-11 w-28 sm:w-32 bg-white/10 rounded-lg p-1.5 backdrop-blur-sm border border-white/15 flex items-center justify-center transition-all group-hover:border-white/30">
+              <div className="relative h-11 bg-white rounded-xl px-3 py-1 shadow-sm border border-white/20 flex items-center justify-center transition-all group-hover:shadow-md">
                 <Image
                   src="/agileintel_logo.png"
                   alt="AgileIntel Research"
-                  width={140}
-                  height={40}
-                  className="h-auto w-auto max-h-8 object-contain brightness-0 invert"
+                  width={160}
+                  height={44}
+                  className="h-8 w-auto object-contain"
                   priority
                 />
               </div>

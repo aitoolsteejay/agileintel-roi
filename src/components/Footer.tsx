@@ -12,23 +12,23 @@ export const Footer: React.FC = () => {
           {/* Col 1: Brand & Partnership */}
           <div className="md:col-span-2 space-y-4">
             <div className="flex items-center space-x-3">
-              <div className="relative h-10 w-28 bg-white/10 rounded-lg p-1 border border-white/15 flex items-center justify-center">
+              <div className="relative h-10 bg-white rounded-lg px-2.5 py-1 border border-white/15 flex items-center justify-center">
                 <Image
                   src="/agileintel_logo.png"
                   alt="AgileIntel Research"
                   width={140}
                   height={40}
-                  className="h-auto w-auto max-h-7 object-contain brightness-0 invert"
+                  className="h-7 w-auto object-contain"
                 />
               </div>
               <span className="text-white/40">×</span>
-              <div className="relative h-10 w-16 bg-white/10 rounded-lg p-1 border border-white/15 flex items-center justify-center">
+              <div className="relative h-10 bg-white rounded-lg px-2.5 py-1 border border-white/15 flex items-center justify-center">
                 <Image
                   src="/maze_logo.png"
                   alt="The Maze"
                   width={70}
                   height={40}
-                  className="h-auto w-auto max-h-6 object-contain brightness-0 invert"
+                  className="h-7 w-auto object-contain"
                 />
               </div>
             </div>
