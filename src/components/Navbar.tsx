@@ -36,7 +36,7 @@ export const Navbar: React.FC = () => {
                   priority
                 />
               </div>
-              <div className="hidden md:flex flex-col border-l border-white/20 pl-3">
+              <div className="hidden sm:flex flex-col border-l border-white/20 pl-3">
                 <span className="text-xs uppercase tracking-widest text-[#8fb0f0] font-semibold">
                   Offshore Delivery
                 </span>
@@ -47,54 +47,13 @@ export const Navbar: React.FC = () => {
             </a>
           </div>
 
-          {/* Navigation Links */}
-          <nav className="hidden lg:flex items-center space-x-8 text-sm font-medium text-slate-200">
-            <button
-              onClick={() => scrollTo("calculator")}
-              className="hover:text-white transition-colors"
-            >
-              Calculator
-            </button>
-            <button
-              onClick={() => scrollTo("capabilities")}
-              className="hover:text-white transition-colors"
-            >
-              Capabilities
-            </button>
-            <button
-              onClick={() => scrollTo("benchmarks")}
-              className="hover:text-white transition-colors"
-            >
-              Salary Benchmarks
-            </button>
-            <button
-              onClick={() => scrollTo("case-studies")}
-              className="hover:text-white transition-colors"
-            >
-              Case Studies
-            </button>
-            <button
-              onClick={() => scrollTo("kpis-governance")}
-              className="hover:text-white transition-colors"
-            >
-              KPIs & Governance
-            </button>
-          </nav>
-
-          {/* CTA Actions */}
+          {/* Direct CTA Action */}
           <div className="flex items-center space-x-3">
             <button
-              onClick={() => scrollTo("calculator")}
-              className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white bg-[#1f4fb4] hover:bg-[#2860d8] border border-blue-400/40 shadow-sm transition-all"
-            >
-              <Calculator className="w-4 h-4" />
-              <span>Calculate Savings</span>
-            </button>
-            <button
               onClick={() => scrollTo("lead-form")}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold text-[#0b2350] bg-white hover:bg-slate-100 shadow-sm transition-all"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-xs sm:text-sm font-semibold text-[#0b2350] bg-white hover:bg-slate-100 shadow-sm transition-all"
             >
-              <span>Get Proposal</span>
+              <span>Get Proposal / Book Call</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
