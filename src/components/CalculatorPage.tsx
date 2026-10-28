@@ -10,7 +10,7 @@ import { Footer } from "./Footer";
 import {
   CalculatorState,
   calculateTeamEconomics,
-  createMarketResearchAnalystsDemo,
+  createDefaultCalculatorState,
 } from "../lib/calculatorEngine";
 import {
   DEFAULT_PRICING_CONFIG,
@@ -19,9 +19,9 @@ import {
 import { Sparkles } from "lucide-react";
 
 export const CalculatorPage: React.FC = () => {
-  // Initialize with the deck's illustrative Market Research Analysts demo
+  // Initialize with clean default state
   const [calculatorState, setCalculatorState] = useState<CalculatorState>(() =>
-    createMarketResearchAnalystsDemo()
+    createDefaultCalculatorState()
   );
 
   // Compute live economics reactively

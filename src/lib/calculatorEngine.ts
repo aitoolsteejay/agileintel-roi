@@ -153,6 +153,24 @@ export function createRoleFromBenchmark(
   };
 }
 
+export function createDefaultCalculatorState(): CalculatorState {
+  const benchmark = SALARY_BENCHMARKS[0]; // Senior Accountant
+  return {
+    country: "United Kingdom",
+    currency: "GBP",
+    hiringSituation: "new_team",
+    roles: [createRoleFromBenchmark(benchmark, "role-1")],
+    additionalCosts: {
+      annualOffshoreManagementFee: 0,
+      otherAnnualOffshoreCosts: 0,
+      oneTimeOffshoreSetupCost: 1500,
+      oneTimeTransitionCost: 2500,
+      avoidLocalRecruitment: true,
+    },
+    pricingConfig: { ...DEFAULT_PRICING_CONFIG },
+  };
+}
+
 /**
  * Creates the illustrative Market Research Analysts demo fixture specified in Section 8:
  * - 3x Market Research Analysts

@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import {
   Plus,
-  Sparkles,
   SlidersHorizontal,
   ChevronDown,
   ChevronUp,
@@ -17,7 +16,6 @@ import {
   CurrencyCode,
   RoleInput,
   createRoleFromBenchmark,
-  createMarketResearchAnalystsDemo,
 } from "../lib/calculatorEngine";
 import { SALARY_BENCHMARKS } from "../data/benchmarks";
 import { RoleRow } from "./RoleRow";
@@ -63,14 +61,6 @@ export const TeamRequirementsForm: React.FC<TeamRequirementsFormProps> = ({
     });
   };
 
-  const handleLoadDemo = () => {
-    const demo = createMarketResearchAnalystsDemo();
-    if (state.pricingConfig.mode === "approved_managed_service") {
-      demo.pricingConfig = { ...INDICATIVE_MANAGED_MODEL_PRESET };
-    }
-    onChange(demo);
-  };
-
   const handleAddRole = (roleName?: string) => {
     const name = roleName || selectedRoleToAdd;
     let newRole: RoleInput;
@@ -109,28 +99,16 @@ export const TeamRequirementsForm: React.FC<TeamRequirementsFormProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Top Controls: Country, Situation, and Demo Preset */}
+      {/* Top Controls: Country, Situation, and Defaults */}
       <div className="bg-white rounded-2xl border border-[#d8dee9] p-5 sm:p-6 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#e3e7ef]">
-          <div>
-            <h3 className="text-base sm:text-lg font-bold text-[#1b2433] flex items-center gap-2">
-              <Briefcase className="w-5 h-5 text-[#1f4fb4]" />
-              Team Configuration & Scope
-            </h3>
-            <p className="text-xs text-[#5b6577] mt-0.5">
-              Specify your proposed team roles, location, and hiring context.
-            </p>
-          </div>
-
-          {/* Quick Demo Button with subtle animation */}
-          <button
-            type="button"
-            onClick={handleLoadDemo}
-            className="btn-tactile inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold text-[#0b2350] bg-[#e8eef9] hover:bg-[#d5ddee] border border-[#1f4fb4]/20 transition-all shadow-xs group"
-          >
-            <Sparkles className="w-4 h-4 text-[#1f4fb4] group-hover:rotate-12 transition-transform duration-300" />
-            <span>Load 3x Market Research Analysts (Deck Demo)</span>
-          </button>
+        <div className="pb-4 border-b border-[#e3e7ef]">
+          <h3 className="text-base sm:text-lg font-bold text-[#1b2433] flex items-center gap-2">
+            <Briefcase className="w-5 h-5 text-[#1f4fb4]" />
+            Team Configuration & Scope
+          </h3>
+          <p className="text-xs text-[#5b6577] mt-0.5">
+            Specify your proposed team roles, location, and hiring context.
+          </p>
         </div>
 
         {/* Location & Currency Row */}
