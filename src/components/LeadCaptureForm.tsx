@@ -5,17 +5,14 @@ import {
   CalculatorState,
   CalculationResult,
 } from "../lib/calculatorEngine";
-import { formatCurrency, formatPercent } from "../lib/formatters";
 import {
   Send,
   CheckCircle2,
   AlertCircle,
-  Lock,
   Mail,
   User,
   Building2,
   Briefcase,
-  Globe2,
 } from "lucide-react";
 
 interface LeadCaptureFormProps {
@@ -32,7 +29,6 @@ export const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({
     workEmail: "",
     company: "",
     jobTitle: "",
-    country: state.country || "United Kingdom",
     notes: "",
     consent: false,
   });
@@ -66,6 +62,7 @@ export const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({
     const payload = {
       prospect: {
         ...formData,
+        country: state.country,
       },
       calculatorSummary: {
         country: state.country,
@@ -116,16 +113,12 @@ export const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({
     <section id="lead-form" className="py-20 bg-white border-b border-[#d8dee9]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-10">
-          <span className="text-xs uppercase tracking-widest font-bold text-[#1f4fb4]">
-            Next Steps · Slide 13
-          </span>
-          <h2 className="mt-2 text-3xl font-bold text-[#1b2433]">
-            Let&apos;s Design the Right Offshore Team for Your Business
+          <h2 className="text-3xl font-bold text-[#1b2433]">
+            Get a tailored quote
           </h2>
           <p className="mt-3 text-sm sm:text-base text-[#5b6577]">
-            Your estimate is a starting point. AgileIntel can help validate the
-            roles, delivery model, and commercial pricing based on your actual
-            event requirements.
+            We&apos;ll review your roles and send a costed proposal with
+            AgileIntel&apos;s actual pricing.
           </p>
         </div>
 
@@ -168,24 +161,6 @@ export const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({
           </div>
         ) : (
           <div className="bg-[#f4f6fa] rounded-2xl border border-[#d8dee9] p-6 sm:p-10 shadow-sm">
-            {/* Context Summary Header */}
-            <div className="bg-white rounded-xl p-4 border border-[#d8dee9] mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-              <div>
-                <span className="text-[#5b6577] block">Attached Estimate:</span>
-                <span className="font-bold text-[#1b2433] text-sm">
-                  {results.totalHeadcount} Headcount across {state.roles.length} Roles
-                </span>
-              </div>
-              <div className="text-right">
-                <span className="text-[#5b6577] block">Estimated Impact:</span>
-                <span className="font-bold text-[#0d8a56] text-sm">
-                  {results.annualSavings !== null
-                    ? `${formatCurrency(results.annualSavings, results.currency)}/yr net savings`
-                    : `${formatCurrency(results.salaryOnlyDifference, results.currency)}/yr salary diff`}
-                </span>
-              </div>
-            </div>
-
             <form onSubmit={handleSubmit} className="space-y-5">
               {errorMessage && (
                 <div className="p-3.5 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700 flex items-center gap-2">
@@ -267,26 +242,10 @@ export const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({
                 </div>
               </div>
 
-              {/* Country */}
-              <div>
-                <label className="block text-xs font-semibold text-[#1b2433] mb-1.5 flex items-center gap-1.5">
-                  <Globe2 className="w-3.5 h-3.5 text-[#1f4fb4]" />
-                  Country / Operating Region
-                </label>
-                <input
-                  type="text"
-                  value={formData.country}
-                  onChange={(e) =>
-                    setFormData({ ...formData, country: e.target.value })
-                  }
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-[#d8dee9] text-sm bg-white text-[#1b2433] focus:ring-2 focus:ring-[#1f4fb4] outline-none"
-                />
-              </div>
-
               {/* Optional Notes */}
               <div>
                 <label className="block text-xs font-semibold text-[#1b2433] mb-1.5">
-                  Specific Requirements or Event Portfolios (Optional)
+                  Anything else we should know? (Optional)
                 </label>
                 <textarea
                   rows={3}
@@ -321,6 +280,12 @@ export const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({
 
               {/* Submit CTA */}
               <div className="pt-4">
+                <p className="mb-3 text-center text-xs text-[#5b6577]">
+                  Your team setup ({results.totalHeadcount}{" "}
+                  {results.totalHeadcount === 1 ? "person" : "people"} across{" "}
+                  {state.roles.length} {state.roles.length === 1 ? "role" : "roles"}) is
+                  sent with your request.
+                </p>
                 <button
                   type="submit"
                   disabled={status === "submitting"}
@@ -328,9 +293,7 @@ export const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({
                 >
                   <Send className="w-4 h-4" />
                   <span>
-                    {status === "submitting"
-                      ? "Submitting Estimate Request..."
-                      : "Request a Tailored Team Estimate"}
+                    {status === "submitting" ? "Sending..." : "Send request"}
                   </span>
                 </button>
               </div>

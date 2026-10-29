@@ -53,7 +53,7 @@ export const Navbar: React.FC = () => {
               onClick={() => scrollTo("lead-form")}
               className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-xs sm:text-sm font-semibold text-[#0b2350] bg-white hover:bg-slate-100 shadow-sm transition-all"
             >
-              <span>Get Proposal / Book Call</span>
+              <span>Get a quote</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>

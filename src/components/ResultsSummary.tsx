@@ -1,226 +1,103 @@
 "use client";
 
 import React from "react";
-import {
-  TrendingUp,
-  Clock,
-  PiggyBank,
-  ArrowRight,
-  CheckCircle2,
-  AlertTriangle,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { CalculationResult } from "../lib/calculatorEngine";
 import { formatCurrency, formatPercent } from "../lib/formatters";
 import { CostComparisonChart } from "./CostComparisonChart";
 
 interface ResultsSummaryProps {
   results: CalculationResult;
-  onGetProposalClick: () => void;
-  onToggleManagedModel: () => void;
+  onGetQuoteClick: () => void;
+}
+
+function describePayback(months: number | null): { value: string; hint: string } {
+  if (months === null) return { value: "—", hint: "No saving to pay it back" };
+  if (months === 0) return { value: "Immediately", hint: "Avoided recruiter fees cover it" };
+  return {
+    value: `${months} month${months === 1 ? "" : "s"}`,
+    hint: "From your monthly saving",
+  };
 }
 
 export const ResultsSummary: React.FC<ResultsSummaryProps> = ({
   results,
-  onGetProposalClick,
-  onToggleManagedModel,
+  onGetQuoteClick,
 }) => {
   const isManaged =
     results.isEligibleForManagedCalculation &&
     results.agileIntelAnnualCost !== null;
 
+  const saving = isManaged ? results.annualSavings ?? 0 : results.salaryOnlyDifference;
+  const savingPct = isManaged
+    ? results.costReductionPercent ?? 0
+    : results.salaryOnlyReductionPercent;
+  const isSaving = saving >= 0;
+  const payback = describePayback(results.breakEvenMonths);
+
   return (
     <div className="bg-white rounded-2xl border border-[#d8dee9] shadow-lg overflow-hidden sticky top-24 transition-all duration-300">
-      {/* Top Banner Header */}
-      <div className="bg-[#0b2350] text-white p-5 sm:p-6 transition-all duration-300">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs uppercase tracking-wider text-[#8fb0f0] font-bold">
-            Team Economics Summary
+      {/* Headline saving */}
+      <div className="bg-[#0b2350] text-white p-5 sm:p-6">
+        <div className="flex items-center justify-between text-xs">
+          <span className="uppercase tracking-wider text-[#8fb0f0] font-bold">
+            {isManaged ? "Estimated saving per year" : "Salary saving per year"}
           </span>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-white/10 text-slate-200 border border-white/15">
-            {results.totalHeadcount} Headcount
+          <span className="text-slate-300">
+            {results.totalHeadcount} {results.totalHeadcount === 1 ? "person" : "people"}
           </span>
         </div>
-
-        {/* Primary Metric: Savings */}
-        {isManaged ? (
-          <div className="animate-fade-in">
-            <div className="text-xs text-slate-300 mb-1">
-              Estimated Ongoing Annual Savings
-            </div>
-            <div className="flex items-baseline gap-3">
-              <span className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-                {formatCurrency(results.annualSavings, results.currency)}
-              </span>
-              <span
-                className={`text-sm sm:text-base font-bold px-2 py-0.5 rounded transition-all duration-300 ${
-                  (results.annualSavings ?? 0) >= 0
-                    ? "bg-[#0d8a56] text-white shadow-xs"
-                    : "bg-red-600 text-white shadow-xs"
-                }`}
-              >
-                {(results.annualSavings ?? 0) >= 0 ? "-" : "+"}
-                {formatPercent(Math.abs(results.costReductionPercent ?? 0), 1)}
-              </span>
-            </div>
-            <div className="mt-1 text-xs text-slate-300">
-              Per year vs current UK local team operating cost
-            </div>
-          </div>
-        ) : (
-          <div className="animate-fade-in">
-            <div className="text-xs text-slate-300 mb-1">
-              Base Salary Benchmark Difference
-            </div>
-            <div className="flex items-baseline gap-3">
-              <span className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-                {formatCurrency(results.salaryOnlyDifference, results.currency)}
-              </span>
-              <span className="text-sm sm:text-base font-bold px-2 py-0.5 rounded bg-[#1f4fb4] text-white shadow-xs">
-                -{formatPercent(results.salaryOnlyReductionPercent, 1)} base
-              </span>
-            </div>
-            <div className="mt-1 text-xs text-slate-300">
-              Source-backed Glassdoor benchmark comparison (excludes management fees)
-            </div>
-          </div>
-        )}
+        <div className="mt-2 flex items-baseline flex-wrap gap-x-3 gap-y-1">
+          <span className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+            {formatCurrency(saving, results.currency)}
+          </span>
+          <span
+            className={`text-sm font-bold px-2 py-0.5 rounded ${
+              isSaving ? "bg-[#0d8a56]" : "bg-red-600"
+            }`}
+          >
+            {formatPercent(Math.abs(savingPct), 0)} {isSaving ? "lower" : "higher"}
+          </span>
+        </div>
       </div>
 
       <div className="p-5 sm:p-6 space-y-5">
-        {/* Unapproved Pricing Honest State Callout */}
-        {!isManaged ? (
-          <div className="bg-[#fffbeb] border border-[#f59e0b]/40 rounded-xl p-3.5 text-xs text-[#92400e] transition-all duration-200">
-            <div className="flex items-start gap-2.5">
-              <AlertTriangle className="w-4 h-4 text-[#d97706] shrink-0 mt-0.5" />
-              <div>
-                <strong className="block font-semibold text-[#78350f] mb-0.5">
-                  Source-Backed Benchmark Mode
-                </strong>
-                <p className="leading-relaxed text-[#92400e]">
-                  Your local team cost is fully calculated. To compute exact net savings,
-                  AgileIntel confirms custom commercial pricing based on your agreed pod scope.
-                </p>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    onClick={onToggleManagedModel}
-                    className="btn-tactile inline-flex items-center gap-1 font-semibold text-[#0b2350] bg-amber-100 hover:bg-amber-200 px-2.5 py-1 rounded border border-amber-300 transition-colors"
-                  >
-                    Simulate Indicative Managed Model (£7.5k/person)
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="bg-[#ecfdf5] border border-[#0d8a56]/30 rounded-xl p-3.5 text-xs text-[#065f46] transition-all duration-200">
-            <div className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-[#0d8a56] shrink-0 mt-0.5" />
-              <div>
-                <span className="font-semibold text-[#064e3b]">
-                  Indicative Managed Model Active:
-                </span>{" "}
-                Includes estimated 12% India statutory employer costs and £7,500/headcount
-                operational management & QA fee.
-                <button
-                  type="button"
-                  onClick={onToggleManagedModel}
-                  className="block mt-1 text-[#0b2350] underline font-medium hover:text-[#1f4fb4] transition-colors"
-                >
-                  Switch back to Salary-Only Benchmark mode
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Visual Comparison Chart */}
         <CostComparisonChart results={results} />
 
-        {/* Key Metrics Grid */}
-        <div className="grid grid-cols-2 gap-3 text-left">
-          {/* Current Local Team Cost */}
-          <div className="bg-[#f4f6fa] rounded-xl p-3 border border-[#d8dee9] hover:border-[#1f4fb4]/30 hover:bg-white transition-all duration-200">
-            <span className="text-[11px] font-medium text-[#5b6577] block">
-              Current Local Cost
-            </span>
-            <span className="text-base sm:text-lg font-bold text-[#1b2433]">
-              {formatCurrency(results.currentAnnualOperatingCost, results.currency)}
-            </span>
-            <span className="text-[10px] text-[#5b6577] block mt-0.5">
-              Base + on-costs + overhead
-            </span>
-          </div>
+        {isManaged && (
+          <dl className="grid grid-cols-2 gap-3 animate-fade-in">
+            <div className="bg-[#f4f6fa] rounded-xl p-3 border border-[#d8dee9]">
+              <dt className="text-[11px] font-medium text-[#5b6577]">First-year saving</dt>
+              <dd className="text-base sm:text-lg font-bold text-[#1b2433]">
+                {formatCurrency(results.firstYearNetSavings, results.currency)}
+              </dd>
+              <dd className="text-[10px] text-[#5b6577]">
+                After {formatCurrency(results.totalOffshoreOneTimeCost, results.currency)}{" "}
+                one-time setup
+              </dd>
+            </div>
+            <div className="bg-[#f4f6fa] rounded-xl p-3 border border-[#d8dee9]">
+              <dt className="text-[11px] font-medium text-[#5b6577]">Setup paid back</dt>
+              <dd className="text-base sm:text-lg font-bold text-[#1b2433]">{payback.value}</dd>
+              <dd className="text-[10px] text-[#5b6577]">{payback.hint}</dd>
+            </div>
+          </dl>
+        )}
 
-          {/* AgileIntel Managed Cost */}
-          <div className="bg-[#f4f6fa] rounded-xl p-3 border border-[#d8dee9] hover:border-[#1f4fb4]/30 hover:bg-white transition-all duration-200">
-            <span className="text-[11px] font-medium text-[#5b6577] block">
-              AgileIntel Annual Cost
-            </span>
-            <span className="text-base sm:text-lg font-bold text-[#1f4fb4]">
-              {formatCurrency(results.agileIntelAnnualCost, results.currency)}
-            </span>
-            <span className="text-[10px] text-[#5b6577] block mt-0.5">
-              {isManaged ? "Managed team cost" : "Requires proposal"}
-            </span>
-          </div>
+        <p className="text-[11px] leading-relaxed text-[#5b6577]">
+          {isManaged
+            ? "Indicative: includes 12% India on-costs and an AgileIntel fee of £7,500 per person a year. Your proposal confirms final pricing."
+            : "Base salaries only, from Glassdoor data (Aug 2026). Choose Full cost above to add on-costs, overheads and AgileIntel's fee."}
+        </p>
 
-          {/* First-Year Net Savings */}
-          <div className="bg-[#f4f6fa] rounded-xl p-3 border border-[#d8dee9] hover:border-[#1f4fb4]/30 hover:bg-white transition-all duration-200">
-            <span className="text-[11px] font-medium text-[#5b6577] block flex items-center gap-1">
-              <PiggyBank className="w-3.5 h-3.5 text-[#0d8a56]" />
-              First-Year Net Savings
-            </span>
-            <span className="text-base sm:text-lg font-bold text-[#1b2433]">
-              {formatCurrency(results.firstYearNetSavings, results.currency)}
-            </span>
-            <span className="text-[10px] text-[#5b6577] block mt-0.5">
-              After setup & transition
-            </span>
-          </div>
-
-          {/* Cost-Based ROI */}
-          <div className="bg-[#f4f6fa] rounded-xl p-3 border border-[#d8dee9] hover:border-[#1f4fb4]/30 hover:bg-white transition-all duration-200">
-            <span className="text-[11px] font-medium text-[#5b6577] block flex items-center gap-1">
-              <TrendingUp className="w-3.5 h-3.5 text-[#1f4fb4]" />
-              Cost-Based ROI
-            </span>
-            <span className="text-base sm:text-lg font-bold text-[#1b2433]">
-              {formatPercent(results.costBasedROI, 0)}
-            </span>
-            <span className="text-[10px] text-[#5b6577] block mt-0.5">
-              Cost-comparison ratio
-            </span>
-          </div>
-        </div>
-
-        {/* Break-Even Period Callout */}
-        <div className="bg-[#e8eef9] border border-[#1f4fb4]/20 rounded-xl p-3 flex items-center gap-2.5 transition-all duration-200">
-          <div className="p-1.5 rounded-lg bg-[#1f4fb4]/10 text-[#1f4fb4]">
-            <Clock className="w-4 h-4" />
-          </div>
-          <div className="flex-1 text-xs">
-            <span className="font-semibold text-[#0b2350] block">
-              Break-Even Horizon:
-            </span>
-            <span className="text-[#5b6577] text-[11px]">{results.breakEvenNote}</span>
-          </div>
-        </div>
-
-        {/* CTA: Get Tailored Estimate */}
-        <div className="pt-1">
-          <button
-            type="button"
-            onClick={onGetProposalClick}
-            className="btn-tactile w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl font-bold text-white bg-[#1f4fb4] hover:bg-[#255bd1] border border-blue-400/40 shadow-md hover:shadow-lg transition-all"
-          >
-            <span>Request a Tailored Team Estimate</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
-          <p className="mt-2 text-center text-[11px] text-[#5b6577]">
-            Scoping session with Dev Mehta (India) & Sandeep Saujani (UK/EU).
-          </p>
-        </div>
+        <button
+          type="button"
+          onClick={onGetQuoteClick}
+          className="btn-tactile w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl font-bold text-white bg-[#1f4fb4] hover:bg-[#255bd1] border border-blue-400/40 shadow-md hover:shadow-lg transition-all"
+        >
+          <span>Get a tailored quote</span>
+          <ArrowRight className="w-4 h-4" />
+        </button>
       </div>
     </div>
   );

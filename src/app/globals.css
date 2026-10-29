@@ -111,6 +111,17 @@ textarea:focus-visible {
   transform: scale(0.98);
 }
 
+/* Hide number-input spinners where a stepper or typing is clearer */
+.no-spin {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.no-spin::-webkit-inner-spin-button,
+.no-spin::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 /* Custom scrollbar styling */
 ::-webkit-scrollbar {
   width: 7px;

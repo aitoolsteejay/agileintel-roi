@@ -163,8 +163,9 @@ export function createDefaultCalculatorState(): CalculatorState {
     additionalCosts: {
       annualOffshoreManagementFee: 0,
       otherAnnualOffshoreCosts: 0,
-      oneTimeOffshoreSetupCost: 1500,
-      oneTimeTransitionCost: 2500,
+      // 0 = use the pricing config (setup scales per person, transition per pod)
+      oneTimeOffshoreSetupCost: 0,
+      oneTimeTransitionCost: 0,
       avoidLocalRecruitment: true,
     },
     pricingConfig: { ...DEFAULT_PRICING_CONFIG },
