@@ -442,20 +442,39 @@ describe("AgileIntel Calculator Engine Unit Tests", () => {
 
     // 3 analysts: £90,000 UK vs £54,000 India
     expect(impact.annualSaving).toBe(36000);
-    expect(impact.threeYearSaving).toBe(108000);
+    expect(impact.projections.map((p) => p.years)).toEqual([1, 3, 5]);
+    expect(impact.projections[2]).toEqual({
+      years: 5,
+      currentCost: 450000,
+      indiaCost: 270000,
+      saving: 180000,
+    });
     expect(impact.capacityMultiple).toBeCloseTo(90000 / 54000);
     expect(impact.indiaHeadcountForSameSpend).toBe(5);
   });
 
   // Test 18: Business impact in full-cost mode nets off the one-time setup
-  it("Scenario 18: three-year saving uses the first-year net saving in full-cost mode", () => {
+  it("Scenario 18: multi-year projections carry setup and recruiter fees in year one", () => {
     const state = createMarketResearchAnalystsDemo();
     state.pricingConfig = { ...INDICATIVE_MANAGED_MODEL_PRESET };
     const result = calculateTeamEconomics(state);
     const impact = calculateBusinessImpact(result);
+    const [oneYear, threeYears] = impact.projections;
 
     expect(impact.annualSaving).toBe(result.annualSavings);
-    expect(impact.threeYearSaving).toBeCloseTo(
+    // Year one matches the engine's first-year totals on both sides
+    expect(oneYear.currentCost).toBeCloseTo(
+      state.hiringSituation === "new_team" || state.additionalCosts.avoidLocalRecruitment
+        ? result.localFirstYearTotalCost
+        : result.currentAnnualOperatingCost
+    );
+    expect(oneYear.indiaCost).toBeCloseTo(result.offshoreFirstYearTotalCost ?? 0);
+    expect(oneYear.saving).toBeCloseTo(result.firstYearNetSavings ?? 0);
+    // Later years add the running yearly costs only
+    expect(threeYears.currentCost - oneYear.currentCost).toBeCloseTo(
+      2 * result.currentAnnualOperatingCost
+    );
+    expect(threeYears.saving).toBeCloseTo(
       (result.firstYearNetSavings ?? 0) + 2 * (result.annualSavings ?? 0)
     );
     expect(impact.capacityMultiple).toBeCloseTo(

@@ -27,13 +27,13 @@ export const CostComparisonChart: React.FC<CostComparisonChartProps> = ({
 
   const localBar = {
     label: "Your current team",
-    swatch: "bg-[#0b2350]",
-    fill: "from-[#0b2350] to-[#14306a]",
+    swatch: "bg-[#5b8def]",
+    fill: "bg-[#5b8def]",
     valueClass: "text-[#1b2433]",
   };
   const indiaBar = {
     swatch: "bg-[#1f4fb4]",
-    fill: "from-[#1f4fb4] to-[#2563eb]",
+    fill: "bg-[#1f4fb4]",
     valueClass: "text-[#1f4fb4]",
   };
 
@@ -83,7 +83,7 @@ export const CostComparisonChart: React.FC<CostComparisonChartProps> = ({
           </div>
           <div className="w-full bg-slate-200/80 rounded-full h-3 overflow-hidden">
             <div
-              className={`bg-gradient-to-r ${bar.fill} h-full rounded-full transition-all duration-700 ease-out`}
+              className={`${bar.fill} h-full rounded-full transition-all duration-700 ease-out`}
               style={{ width: `${Math.round((bar.value / maxVal) * 100)}%` }}
             />
           </div>

@@ -492,20 +492,55 @@ export function calculateTeamEconomics(state: CalculatorState): CalculationResul
   };
 }
 
+export interface CostProjection {
+  years: number;
+  /** Total cost of keeping the current team over the period. */
+  currentCost: number;
+  /** Total cost of the India team, including one-time setup in full-cost mode. */
+  indiaCost: number;
+  saving: number;
+}
+
+export const PROJECTION_YEARS = [1, 3, 5];
+
+/**
+ * Cumulative cost of each option over a number of years, holding today's
+ * salaries flat. In full-cost mode the first year carries the one-time setup
+ * and any recruiter fees avoided, exactly as the first-year saving does.
+ */
+export function projectCosts(results: CalculationResult, years: number): CostProjection {
+  const isManaged =
+    results.isEligibleForManagedCalculation &&
+    results.agileIntelAnnualCost !== null &&
+    results.annualSavings !== null;
+
+  if (!isManaged) {
+    const currentCost = results.totalLocalBaseSalaries * years;
+    const indiaCost = results.totalIndiaBaseSalaries * years;
+    return { years, currentCost, indiaCost, saving: currentCost - indiaCost };
+  }
+
+  const indiaCost =
+    (results.agileIntelAnnualCost ?? 0) * years + results.totalOffshoreOneTimeCost;
+  const saving =
+    (results.firstYearNetSavings ?? 0) + (years - 1) * (results.annualSavings ?? 0);
+  return { years, currentCost: indiaCost + saving, indiaCost, saving };
+}
+
 export interface BusinessImpact {
   /** Yearly saving, which adds straight to profit. */
   annualSaving: number;
-  /** Saving over three years, net of the one-time setup in full-cost mode. */
-  threeYearSaving: number;
   /** How many times over today's yearly spend would pay for the India team. */
   capacityMultiple: number | null;
   /** Whole people today's yearly spend would fund in India. */
   indiaHeadcountForSameSpend: number | null;
+  /** Cumulative costs at 1, 3 and 5 years. */
+  projections: CostProjection[];
 }
 
 /**
- * What the estimate means for the business: profit added, three-year value and
- * how much more team the current budget would buy in India.
+ * What the estimate means for the business: profit added, how much more team
+ * the current budget would buy in India, and costs over time.
  */
 export function calculateBusinessImpact(results: CalculationResult): BusinessImpact {
   const isManaged =
@@ -522,9 +557,6 @@ export function calculateBusinessImpact(results: CalculationResult): BusinessImp
   const annualSaving = isManaged
     ? (results.annualSavings ?? 0)
     : results.salaryOnlyDifference;
-  const threeYearSaving = isManaged
-    ? (results.firstYearNetSavings ?? 0) + 2 * annualSaving
-    : 3 * annualSaving;
 
   const capacityMultiple = indiaCost > 0 ? currentCost / indiaCost : null;
   const indiaHeadcountForSameSpend =
@@ -532,5 +564,10 @@ export function calculateBusinessImpact(results: CalculationResult): BusinessImp
       ? Math.floor(results.totalHeadcount * capacityMultiple + 1e-9)
       : null;
 
-  return { annualSaving, threeYearSaving, capacityMultiple, indiaHeadcountForSameSpend };
+  return {
+    annualSaving,
+    capacityMultiple,
+    indiaHeadcountForSameSpend,
+    projections: PROJECTION_YEARS.map((years) => projectCosts(results, years)),
+  };
 }

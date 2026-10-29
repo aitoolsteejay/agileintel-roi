@@ -35,6 +35,18 @@ export function formatCurrency(
 }
 
 /**
+ * Compact currency for chart axes and bar labels (e.g. £85K, £1.2M).
+ */
+export function formatCompactCurrency(value: number, currency: CurrencyCode = "GBP"): string {
+  const symbol = getCurrencySymbol(currency);
+  const sign = value < 0 ? "-" : "";
+  const abs = Math.abs(value);
+  if (abs >= 999_500) return `${sign}${symbol}${Number((abs / 1_000_000).toFixed(1))}M`;
+  if (abs >= 1_000) return `${sign}${symbol}${Math.round(abs / 1_000)}K`;
+  return `${sign}${symbol}${Math.round(abs)}`;
+}
+
+/**
  * Formats a percentage number with 1 decimal place or integer.
  */
 export function formatPercent(

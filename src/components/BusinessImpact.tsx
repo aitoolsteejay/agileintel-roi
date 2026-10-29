@@ -4,7 +4,6 @@ import React, { useId, useState } from "react";
 import {
   Clock,
   Headset,
-  PiggyBank,
   ShieldCheck,
   TrendingUp,
   Users,
@@ -13,6 +12,7 @@ import { CalculationResult, calculateBusinessImpact } from "../lib/calculatorEng
 import { formatCurrency, formatPercent, getCurrencySymbol } from "../lib/formatters";
 import { AnimatedNumber } from "./AnimatedNumber";
 import { Reveal } from "./Reveal";
+import { CostOverTimeChart } from "./CostOverTimeChart";
 
 // From AgileIntel's value proposition for B2B event organisers
 const BENEFITS = [
@@ -102,7 +102,7 @@ export const BusinessImpact: React.FC<BusinessImpactProps> = ({ results }) => {
 
       {hasSaving ? (
         <>
-          <div className="mt-5 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
             <Reveal>
               <MetricTile
                 icon={TrendingUp}
@@ -125,14 +125,6 @@ export const BusinessImpact: React.FC<BusinessImpactProps> = ({ results }) => {
                   </>
                 }
                 hint={capacityHint}
-              />
-            </Reveal>
-            <Reveal delay={200}>
-              <MetricTile
-                icon={PiggyBank}
-                label="Estimated saving over three years"
-                value={<AnimatedNumber value={impact.threeYearSaving} format={money} />}
-                hint={isManaged ? "After the one-time setup cost." : "On base salaries alone."}
               />
             </Reveal>
           </div>
@@ -185,6 +177,52 @@ export const BusinessImpact: React.FC<BusinessImpactProps> = ({ results }) => {
           gain to show. Check the salaries above.
         </p>
       )}
+
+      {/* Cost over time: chart plus the same numbers as a table */}
+      <Reveal className="mt-4">
+        <div className="bg-white rounded-2xl border border-[#d8dee9] p-5 sm:p-6 shadow-sm">
+          <h3 className="text-sm font-semibold text-[#1b2433]">
+            Total cost over 1, 3 and 5 years
+          </h3>
+          <p className="text-xs text-[#5b6577] mt-0.5">
+            {isManaged
+              ? "Year one includes the one-time setup. Today's salaries, held flat."
+              : "Base salaries only, at today's rates."}
+          </p>
+          <div className="mt-5 grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-10 items-center">
+            <div className="lg:col-span-3">
+              <CostOverTimeChart
+                projections={impact.projections}
+                currency={currency}
+                indiaLabel={isManaged ? "AgileIntel India team" : "Same roles in India"}
+              />
+            </div>
+            <table className="lg:col-span-2 w-full text-xs tabular-nums">
+              <caption className="sr-only">Total cost and saving at 1, 3 and 5 years</caption>
+              <thead>
+                <tr className="text-[11px] uppercase tracking-wider text-[#5b6577]">
+                  <th scope="col" className="text-left font-semibold pb-2">Period</th>
+                  <th scope="col" className="text-right font-semibold pb-2">Current</th>
+                  <th scope="col" className="text-right font-semibold pb-2">India</th>
+                  <th scope="col" className="text-right font-semibold pb-2">Saving</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#e3e7ef]">
+                {impact.projections.map((p) => (
+                  <tr key={p.years}>
+                    <th scope="row" className="text-left font-semibold text-[#1b2433] py-2.5">
+                      {p.years} year{p.years === 1 ? "" : "s"}
+                    </th>
+                    <td className="text-right text-[#1b2433]">{money(p.currentCost)}</td>
+                    <td className="text-right text-[#1b2433]">{money(p.indiaCost)}</td>
+                    <td className="text-right font-bold text-[#0d8a56]">{money(p.saving)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </Reveal>
 
       {/* Beyond cost, and proof it works */}
       <Reveal className="mt-4">
