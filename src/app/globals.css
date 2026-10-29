@@ -78,11 +78,37 @@ body {
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .animate-slide-up {
-  animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Scroll-in reveal (see Reveal.tsx) */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-slide-up,
+  .animate-float,
+  .animate-pulse-glow {
+    animation: none;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
 
 .animate-float {

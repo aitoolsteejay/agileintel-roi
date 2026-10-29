@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Trash2, RotateCcw } from "lucide-react";
-import { CurrencyCode, RoleInput } from "../lib/calculatorEngine";
+import { CurrencyCode, RoleInput, deriveIndiaSalary } from "../lib/calculatorEngine";
 import { FUNCTION_CATEGORIES, SALARY_BENCHMARKS } from "../data/benchmarks";
 import { formatPercent, getCurrencySymbol } from "../lib/formatters";
 
@@ -205,7 +205,13 @@ export const RoleRow: React.FC<RoleRowProps> = ({
             symbol={symbol}
             value={role.localAnnualSalary}
             onChange={(v) =>
-              onUpdate({ ...role, localAnnualSalary: v, isSalaryOverridden: true })
+              // India salary follows at the deck's saving; it can still be typed over
+              onUpdate({
+                ...role,
+                localAnnualSalary: v,
+                customIndiaSalary: deriveIndiaSalary(v, benchmark),
+                isSalaryOverridden: true,
+              })
             }
           />
         </div>

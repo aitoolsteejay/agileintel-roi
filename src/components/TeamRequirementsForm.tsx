@@ -90,8 +90,8 @@ export const TeamRequirementsForm: React.FC<TeamRequirementsFormProps> = ({
         </div>
         {state.country !== "United Kingdom" && (
           <p className="mt-2 text-[11px] text-[#b45309] bg-[#fffbeb] p-2 rounded border border-[#f59e0b]/30 animate-fade-in">
-            The salaries start as UK figures in pounds. Replace them with your own
-            figures in {getCurrencySymbol(state.currency)}.
+            The salaries start as UK figures in pounds. Enter your current salaries in{" "}
+            {getCurrencySymbol(state.currency)} and the India salaries will follow.
           </p>
         )}
 
@@ -100,7 +100,8 @@ export const TeamRequirementsForm: React.FC<TeamRequirementsFormProps> = ({
           <h3 className="text-sm font-semibold text-[#1b2433]">Which roles do you need?</h3>
           <p className="text-xs text-[#5b6577] mt-0.5">
             Yearly base salary per person, pre-filled from AgileIntel&apos;s benchmarks.
-            Change any number.
+            Change the current salary and the India salary follows at that role&apos;s
+            benchmarked saving.
           </p>
 
           <div

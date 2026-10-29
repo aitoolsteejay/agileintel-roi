@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { CalculationResult } from "../lib/calculatorEngine";
 import { formatCurrency, formatPercent } from "../lib/formatters";
 import { CostComparisonChart } from "./CostComparisonChart";
+import { AnimatedNumber } from "./AnimatedNumber";
 
 interface ResultsSummaryProps {
   results: CalculationResult;
@@ -48,9 +49,11 @@ export const ResultsSummary: React.FC<ResultsSummaryProps> = ({
           </span>
         </div>
         <div className="mt-2 flex items-baseline flex-wrap gap-x-3 gap-y-1">
-          <span className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-            {formatCurrency(saving, results.currency)}
-          </span>
+          <AnimatedNumber
+            value={saving}
+            format={(n) => formatCurrency(n, results.currency)}
+            className="text-3xl sm:text-4xl font-extrabold tracking-tight tabular-nums"
+          />
           <span
             className={`text-sm font-bold px-2 py-0.5 rounded ${
               isSaving ? "bg-[#0d8a56]" : "bg-red-600"

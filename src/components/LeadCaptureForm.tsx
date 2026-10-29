@@ -14,6 +14,7 @@ import {
   Building2,
   Briefcase,
 } from "lucide-react";
+import { Reveal } from "./Reveal";
 
 interface LeadCaptureFormProps {
   state: CalculatorState;
@@ -112,15 +113,16 @@ export const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({
   return (
     <section id="lead-form" className="py-20 bg-white border-b border-[#d8dee9]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-10">
+        <Reveal className="text-center max-w-2xl mx-auto mb-10">
           <h2 className="text-3xl font-bold text-[#1b2433]">
             Get a tailored quote
           </h2>
           <p className="mt-3 text-sm sm:text-base text-[#5b6577]">
-            We&apos;ll review your roles and send a costed proposal with
-            AgileIntel&apos;s actual pricing.
+            Tell us about the backend workload for your upcoming events. We&apos;ll
+            review your roles and send a costed proposal with AgileIntel&apos;s actual
+            pricing.
           </p>
-        </div>
+        </Reveal>
 
         {status === "success" ? (
           <div className="bg-[#ecfdf5] border border-[#0d8a56]/40 rounded-2xl p-8 text-center max-w-xl mx-auto shadow-sm">

@@ -2,6 +2,13 @@
 
 import React from "react";
 import { ArrowDown, Sparkles, TrendingUp, Users } from "lucide-react";
+import { AnimatedNumber } from "./AnimatedNumber";
+
+const HERO_STATS = [
+  { value: 49, suffix: "%", label: "Average base salary saving" },
+  { value: 24, suffix: "", label: "Benchmarked roles" },
+  { value: 6, suffix: " Wks", label: "To a live India pod" },
+];
 
 interface HeroProps {
   onCalculateClick: () => void;
@@ -40,20 +47,26 @@ export const Hero: React.FC<HeroProps> = ({ onCalculateClick }) => {
             marketing, or research to an AgileIntel-managed team in India.
           </p>
 
-          {/* Quick Stats Strip with hover elevation */}
+          {/* Quick stats: chips stagger in, numbers tick up */}
           <div className="mt-7 flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-medium">
-            <div className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-3.5 py-2 rounded-xl backdrop-blur-xs transition-all duration-200 hover:-translate-y-0.5">
-              <span className="font-black text-[#8fb0f0] text-base">49%</span>
-              <span className="text-slate-200">Average base salary saving</span>
-            </div>
-            <div className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-3.5 py-2 rounded-xl backdrop-blur-xs transition-all duration-200 hover:-translate-y-0.5">
-              <span className="font-black text-[#8fb0f0] text-base">24</span>
-              <span className="text-slate-200">Benchmarked roles</span>
-            </div>
-            <div className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-3.5 py-2 rounded-xl backdrop-blur-xs transition-all duration-200 hover:-translate-y-0.5">
-              <span className="font-black text-[#8fb0f0] text-base">6 Wks</span>
-              <span className="text-slate-200">To a live India pod</span>
-            </div>
+            {HERO_STATS.map((stat, i) => (
+              <div
+                key={stat.label}
+                className="animate-slide-up"
+                style={{ animationDelay: `${250 + i * 120}ms` }}
+              >
+                <div className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-3.5 py-2 rounded-xl backdrop-blur-xs transition-all duration-200 hover:-translate-y-0.5">
+                  <AnimatedNumber
+                    value={stat.value}
+                    format={(n) => `${Math.round(n)}${stat.suffix}`}
+                    countUpOnView
+                    duration={1400}
+                    className="font-black text-[#8fb0f0] text-base tabular-nums"
+                  />
+                  <span className="text-slate-200">{stat.label}</span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

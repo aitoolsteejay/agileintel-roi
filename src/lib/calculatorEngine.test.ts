@@ -1,9 +1,11 @@
 import { describe, it, expect } from "vitest";
 import {
+  calculateBusinessImpact,
   calculateTeamEconomics,
   createMarketResearchAnalystsDemo,
   createRoleFromBenchmark,
   CalculatorState,
+  deriveIndiaSalary,
   sanitizeNumber,
 } from "./calculatorEngine";
 import { SALARY_BENCHMARKS } from "../data/benchmarks";
@@ -415,5 +417,49 @@ describe("AgileIntel Calculator Engine Unit Tests", () => {
       (newTeamResult.firstYearNetSavings ?? 0) -
         (replaceResult.firstYearNetSavings ?? 0)
     ).toBe(15000);
+  });
+
+  // Test 16: India salary follows the current salary at the deck's saving
+  it("Scenario 16: derives the India salary from the deck's per-role saving", () => {
+    // At the deck's UK salary, every role returns the deck's India salary
+    for (const bm of SALARY_BENCHMARKS) {
+      expect(deriveIndiaSalary(bm.ukSalaryGBP, bm)).toBe(bm.indiaSalaryGBP);
+    }
+
+    // Marketing Automation Specialist: £42,000 -> £18,000, so £70,000 -> £30,000
+    const mas = SALARY_BENCHMARKS.find((b) => b.role === "Marketing Automation Specialist");
+    expect(deriveIndiaSalary(70000, mas)).toBe(30000);
+
+    // Custom roles use the deck-wide average (£24,460 / £47,590), rounded to 100
+    expect(deriveIndiaSalary(47590)).toBe(24500);
+    expect(deriveIndiaSalary(0)).toBe(0);
+  });
+
+  // Test 17: Business impact in salary-only mode
+  it("Scenario 17: summarises profit, three-year and capacity impact on salaries only", () => {
+    const result = calculateTeamEconomics(createMarketResearchAnalystsDemo());
+    const impact = calculateBusinessImpact(result);
+
+    // 3 analysts: £90,000 UK vs £54,000 India
+    expect(impact.annualSaving).toBe(36000);
+    expect(impact.threeYearSaving).toBe(108000);
+    expect(impact.capacityMultiple).toBeCloseTo(90000 / 54000);
+    expect(impact.indiaHeadcountForSameSpend).toBe(5);
+  });
+
+  // Test 18: Business impact in full-cost mode nets off the one-time setup
+  it("Scenario 18: three-year saving uses the first-year net saving in full-cost mode", () => {
+    const state = createMarketResearchAnalystsDemo();
+    state.pricingConfig = { ...INDICATIVE_MANAGED_MODEL_PRESET };
+    const result = calculateTeamEconomics(state);
+    const impact = calculateBusinessImpact(result);
+
+    expect(impact.annualSaving).toBe(result.annualSavings);
+    expect(impact.threeYearSaving).toBeCloseTo(
+      (result.firstYearNetSavings ?? 0) + 2 * (result.annualSavings ?? 0)
+    );
+    expect(impact.capacityMultiple).toBeCloseTo(
+      result.currentAnnualOperatingCost / (result.agileIntelAnnualCost ?? 1)
+    );
   });
 });

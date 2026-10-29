@@ -111,6 +111,23 @@ export function sanitizeNumber(value: unknown, fallback = 0): number {
   return num;
 }
 
+/** India-to-UK salary ratio across all benchmark roles (deck: £24,460 / £47,590). */
+const AVERAGE_INDIA_SALARY_RATIO =
+  SALARY_BENCHMARKS.reduce((sum, b) => sum + b.indiaSalaryGBP, 0) /
+  SALARY_BENCHMARKS.reduce((sum, b) => sum + b.ukSalaryGBP, 0);
+
+/**
+ * India salary for a role at the given current salary, keeping the deck's
+ * percentage saving for that role (or the deck-wide average for custom roles).
+ * Rounded to the nearest 100.
+ */
+export function deriveIndiaSalary(localSalary: number, benchmark?: SalaryBenchmark): number {
+  const ratio = benchmark
+    ? benchmark.indiaSalaryGBP / benchmark.ukSalaryGBP
+    : AVERAGE_INDIA_SALARY_RATIO;
+  return Math.round((localSalary * ratio) / 100) * 100;
+}
+
 /**
  * Creates a default role item based on a benchmark entry or defaults.
  */
@@ -143,8 +160,8 @@ export function createRoleFromBenchmark(
     headcount: 1,
     localAnnualSalary: 45000,
     isBenchmarkRole: false,
-    benchmarkIndiaSalary: 22000,
-    customIndiaSalary: 22000,
+    benchmarkIndiaSalary: deriveIndiaSalary(45000),
+    customIndiaSalary: deriveIndiaSalary(45000),
     isSalaryOverridden: false,
     employerCostType: "percentage",
     employerCostValue: 15.0,
@@ -473,4 +490,47 @@ export function calculateTeamEconomics(state: CalculatorState): CalculationResul
     isEligibleForManagedCalculation: isApprovedPricing,
     validationErrors,
   };
+}
+
+export interface BusinessImpact {
+  /** Yearly saving, which adds straight to profit. */
+  annualSaving: number;
+  /** Saving over three years, net of the one-time setup in full-cost mode. */
+  threeYearSaving: number;
+  /** How many times over today's yearly spend would pay for the India team. */
+  capacityMultiple: number | null;
+  /** Whole people today's yearly spend would fund in India. */
+  indiaHeadcountForSameSpend: number | null;
+}
+
+/**
+ * What the estimate means for the business: profit added, three-year value and
+ * how much more team the current budget would buy in India.
+ */
+export function calculateBusinessImpact(results: CalculationResult): BusinessImpact {
+  const isManaged =
+    results.isEligibleForManagedCalculation &&
+    results.agileIntelAnnualCost !== null &&
+    results.annualSavings !== null;
+
+  const currentCost = isManaged
+    ? results.currentAnnualOperatingCost
+    : results.totalLocalBaseSalaries;
+  const indiaCost = isManaged
+    ? (results.agileIntelAnnualCost ?? 0)
+    : results.totalIndiaBaseSalaries;
+  const annualSaving = isManaged
+    ? (results.annualSavings ?? 0)
+    : results.salaryOnlyDifference;
+  const threeYearSaving = isManaged
+    ? (results.firstYearNetSavings ?? 0) + 2 * annualSaving
+    : 3 * annualSaving;
+
+  const capacityMultiple = indiaCost > 0 ? currentCost / indiaCost : null;
+  const indiaHeadcountForSameSpend =
+    capacityMultiple !== null
+      ? Math.floor(results.totalHeadcount * capacityMultiple + 1e-9)
+      : null;
+
+  return { annualSaving, threeYearSaving, capacityMultiple, indiaHeadcountForSameSpend };
 }

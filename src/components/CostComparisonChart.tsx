@@ -3,6 +3,7 @@
 import React from "react";
 import { CalculationResult } from "../lib/calculatorEngine";
 import { formatCurrency } from "../lib/formatters";
+import { AnimatedNumber } from "./AnimatedNumber";
 
 interface CostComparisonChartProps {
   results: CalculationResult;
@@ -74,9 +75,11 @@ export const CostComparisonChart: React.FC<CostComparisonChartProps> = ({
               <span className={`w-2.5 h-2.5 rounded-sm ${bar.swatch}`} />
               {bar.label}
             </span>
-            <span className={`font-bold ${bar.valueClass}`}>
-              {formatCurrency(bar.value, results.currency)}
-            </span>
+            <AnimatedNumber
+              value={bar.value}
+              format={(n) => formatCurrency(n, results.currency)}
+              className={`font-bold tabular-nums ${bar.valueClass}`}
+            />
           </div>
           <div className="w-full bg-slate-200/80 rounded-full h-3 overflow-hidden">
             <div
