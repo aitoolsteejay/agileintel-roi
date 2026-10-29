@@ -66,7 +66,7 @@ export const SALARY_BENCHMARKS: SalaryBenchmark[] = [
   },
   {
     role: "Content Marketing Specialist",
-    function: "Content & Creative",
+    function: "Marketing Operations",
     ukSalaryGBP: 35000,
     indiaSalaryGBP: 18000,
     statedSavingPercent: 49,
@@ -152,7 +152,7 @@ export const SALARY_BENCHMARKS: SalaryBenchmark[] = [
   },
   {
     role: "BI Analyst",
-    function: "Data Science & Analytics",
+    function: "Research & Data",
     ukSalaryGBP: 40000,
     indiaSalaryGBP: 20000,
     statedSavingPercent: 50,

@@ -15,54 +15,27 @@ interface Bar {
   swatch: string;
   fill: string;
   valueClass: string;
-  parts?: [string, number | null][];
 }
 
 export const CostComparisonChart: React.FC<CostComparisonChartProps> = ({
   results,
 }) => {
-  const isManaged =
-    results.isEligibleForManagedCalculation &&
-    results.agileIntelAnnualCost !== null;
-
-  const localBar = {
-    label: "Your current team",
-    swatch: "bg-[#5b8def]",
-    fill: "bg-[#5b8def]",
-    valueClass: "text-[#1b2433]",
-  };
-  const indiaBar = {
-    swatch: "bg-[#1f4fb4]",
-    fill: "bg-[#1f4fb4]",
-    valueClass: "text-[#1f4fb4]",
-  };
-
-  const bars: Bar[] = isManaged
-    ? [
-        {
-          ...localBar,
-          value: results.currentAnnualOperatingCost,
-          parts: [
-            ["Salary", results.totalLocalBaseSalaries],
-            ["On-costs", results.totalEmployerCosts],
-            ["Overhead", results.totalAnnualOverhead],
-          ],
-        },
-        {
-          ...indiaBar,
-          label: "AgileIntel India team",
-          value: results.agileIntelAnnualCost ?? 0,
-          parts: [
-            ["Salary", results.totalIndiaBaseSalaries],
-            ["India on-costs", results.indiaEmployerCosts],
-            ["AgileIntel fee", results.offshoreManagementFees],
-          ],
-        },
-      ]
-    : [
-        { ...localBar, value: results.totalLocalBaseSalaries },
-        { ...indiaBar, label: "Same roles in India", value: results.totalIndiaBaseSalaries },
-      ];
+  const bars: Bar[] = [
+    {
+      label: "Your current team",
+      value: results.totalLocalBaseSalaries,
+      swatch: "bg-[#5b8def]",
+      fill: "bg-[#5b8def]",
+      valueClass: "text-[#1b2433]",
+    },
+    {
+      label: "Same roles in India",
+      value: results.totalIndiaBaseSalaries,
+      swatch: "bg-[#1f4fb4]",
+      fill: "bg-[#1f4fb4]",
+      valueClass: "text-[#1f4fb4]",
+    },
+  ];
 
   const maxVal = Math.max(...bars.map((b) => b.value), 1);
 
@@ -87,13 +60,6 @@ export const CostComparisonChart: React.FC<CostComparisonChartProps> = ({
               style={{ width: `${Math.round((bar.value / maxVal) * 100)}%` }}
             />
           </div>
-          {bar.parts && (
-            <div className="mt-1 text-[11px] text-[#5b6577]">
-              {bar.parts
-                .map(([label, value]) => `${label} ${formatCurrency(value, results.currency)}`)
-                .join(" · ")}
-            </div>
-          )}
         </div>
       ))}
     </div>

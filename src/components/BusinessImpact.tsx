@@ -14,26 +14,26 @@ import { AnimatedNumber } from "./AnimatedNumber";
 import { Reveal } from "./Reveal";
 import { CostOverTimeChart } from "./CostOverTimeChart";
 
-// From AgileIntel's value proposition for B2B event organisers
+// Wording and figures from the AgileIntel Offshoring B2B Events Introduction 2026 deck
 const BENEFITS = [
   {
     icon: Headset,
-    title: "Your team sells, we run the backend",
-    text: "Your commercial team focuses on delegates, exhibitors and sponsors. The India team handles account research, CRM data, event reports, design and admin.",
+    title: "Your senior team leads the event",
+    text: "Your India team powers the operations behind it, from market research to post-event reporting.",
   },
   {
     icon: ShieldCheck,
-    title: "Managed for you",
-    text: "AgileIntel recruits and manages the team, sets SOPs and quality checks, and reports to you, so you keep control of the event calendar.",
+    title: "You manage the work. We manage the operation.",
+    text: "AgileIntel handles recruitment, HR, payroll, benefits, compliance, IT, team management and performance monitoring.",
   },
   {
     icon: Clock,
-    title: "Scale for busy seasons",
-    text: "Add capacity for campaign ramps and new launches without a local hiring cycle. Hiring in India typically takes 28–39 days, against 36–44 in the UK.",
+    title: "Faster to hire",
+    text: "28–39 days to hire in India, against 36–44 days in the UK.",
   },
 ];
 
-// Anonymised: client names need approval before public use
+// Case study 2 in the deck
 const PROOF_POINTS = [
   { value: 10000, prefix: "", suffix: "+", label: "companies tiered" },
   { value: 50000, prefix: "", suffix: "+", label: "contacts enriched" },
@@ -74,8 +74,6 @@ export const BusinessImpact: React.FC<BusinessImpactProps> = ({ results }) => {
   const [profit, setProfit] = useState(0);
   const profitId = useId();
 
-  const isManaged =
-    results.isEligibleForManagedCalculation && results.agileIntelAnnualCost !== null;
   const impact = calculateBusinessImpact(results);
   const currency = results.currency;
   const headcount = results.totalHeadcount;
@@ -95,8 +93,8 @@ export const BusinessImpact: React.FC<BusinessImpactProps> = ({ results }) => {
           What this means for your business
         </h2>
         <p className="text-sm text-[#5b6577] mt-1 max-w-3xl">
-          AgileIntel builds and manages an India-based sales intelligence and event-support
-          team that works as an extension of your B2B event business.
+          Not a staffing vendor. An extension of your team: your team in India, managed by
+          AgileIntel.
         </p>
       </Reveal>
 
@@ -184,17 +182,13 @@ export const BusinessImpact: React.FC<BusinessImpactProps> = ({ results }) => {
           <h3 className="text-sm font-semibold text-[#1b2433]">
             Total cost over 1, 3 and 5 years
           </h3>
-          <p className="text-xs text-[#5b6577] mt-0.5">
-            {isManaged
-              ? "Year one includes the one-time setup. Today's salaries, held flat."
-              : "Base salaries only, at today's rates."}
-          </p>
+          <p className="text-xs text-[#5b6577] mt-0.5">Base salaries only, at today&apos;s rates.</p>
           <div className="mt-5 grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-10 items-center">
             <div className="lg:col-span-3">
               <CostOverTimeChart
                 projections={impact.projections}
                 currency={currency}
-                indiaLabel={isManaged ? "AgileIntel India team" : "Same roles in India"}
+                indiaLabel="Same roles in India"
               />
             </div>
             <table className="lg:col-span-2 w-full text-xs tabular-nums">
@@ -241,7 +235,7 @@ export const BusinessImpact: React.FC<BusinessImpactProps> = ({ results }) => {
 
           <div className="mt-6 pt-5 border-t border-white/10">
             <p className="text-xs font-semibold uppercase tracking-wider text-[#8fb0f0]">
-              For a global B2B events organiser
+              Case study: global B2B events and conference organiser
             </p>
             <dl className="mt-3 grid grid-cols-2 md:grid-cols-4 gap-4">
               {PROOF_POINTS.map((p) => (
@@ -266,9 +260,8 @@ export const BusinessImpact: React.FC<BusinessImpactProps> = ({ results }) => {
       </Reveal>
 
       <p className="mt-3 text-[11px] leading-relaxed text-[#5b6577]">
-        Estimates use the figures above and aren&apos;t a guaranteed saving. Client results
-        are from a past engagement and depend on scope. Hiring times are from AgileIntel&apos;s
-        2026 India briefing.
+        Estimates use the salaries above and aren&apos;t a guaranteed saving. Case study and
+        hiring figures are from AgileIntel&apos;s Offshoring B2B Events Introduction 2026.
       </p>
     </div>
   );

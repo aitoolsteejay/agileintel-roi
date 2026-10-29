@@ -12,29 +12,13 @@ interface ResultsSummaryProps {
   onGetQuoteClick: () => void;
 }
 
-function describePayback(months: number | null): { value: string; hint: string } {
-  if (months === null) return { value: "—", hint: "No saving to pay it back" };
-  if (months === 0) return { value: "Immediately", hint: "Avoided recruiter fees cover it" };
-  return {
-    value: `${months} month${months === 1 ? "" : "s"}`,
-    hint: "From your monthly saving",
-  };
-}
-
 export const ResultsSummary: React.FC<ResultsSummaryProps> = ({
   results,
   onGetQuoteClick,
 }) => {
-  const isManaged =
-    results.isEligibleForManagedCalculation &&
-    results.agileIntelAnnualCost !== null;
-
-  const saving = isManaged ? results.annualSavings ?? 0 : results.salaryOnlyDifference;
-  const savingPct = isManaged
-    ? results.costReductionPercent ?? 0
-    : results.salaryOnlyReductionPercent;
+  const saving = results.salaryOnlyDifference;
+  const savingPct = results.salaryOnlyReductionPercent;
   const isSaving = saving >= 0;
-  const payback = describePayback(results.breakEvenMonths);
 
   return (
     <div className="bg-white rounded-2xl border border-[#d8dee9] shadow-lg overflow-hidden sticky top-24 transition-all duration-300">
@@ -42,7 +26,7 @@ export const ResultsSummary: React.FC<ResultsSummaryProps> = ({
       <div className="bg-[#0b2350] text-white p-5 sm:p-6">
         <div className="flex items-center justify-between text-xs">
           <span className="uppercase tracking-wider text-[#8fb0f0] font-bold">
-            {isManaged ? "Estimated saving per year" : "Salary saving per year"}
+            Salary saving per year
           </span>
           <span className="text-slate-300">
             {results.totalHeadcount} {results.totalHeadcount === 1 ? "person" : "people"}
@@ -67,30 +51,10 @@ export const ResultsSummary: React.FC<ResultsSummaryProps> = ({
       <div className="p-5 sm:p-6 space-y-5">
         <CostComparisonChart results={results} />
 
-        {isManaged && (
-          <dl className="grid grid-cols-2 gap-3 animate-fade-in">
-            <div className="bg-[#f4f6fa] rounded-xl p-3 border border-[#d8dee9]">
-              <dt className="text-[11px] font-medium text-[#5b6577]">First-year saving</dt>
-              <dd className="text-base sm:text-lg font-bold text-[#1b2433]">
-                {formatCurrency(results.firstYearNetSavings, results.currency)}
-              </dd>
-              <dd className="text-[10px] text-[#5b6577]">
-                After {formatCurrency(results.totalOffshoreOneTimeCost, results.currency)}{" "}
-                one-time setup
-              </dd>
-            </div>
-            <div className="bg-[#f4f6fa] rounded-xl p-3 border border-[#d8dee9]">
-              <dt className="text-[11px] font-medium text-[#5b6577]">Setup paid back</dt>
-              <dd className="text-base sm:text-lg font-bold text-[#1b2433]">{payback.value}</dd>
-              <dd className="text-[10px] text-[#5b6577]">{payback.hint}</dd>
-            </div>
-          </dl>
-        )}
-
         <p className="text-[11px] leading-relaxed text-[#5b6577]">
-          {isManaged
-            ? "Indicative: includes 12% India on-costs and an AgileIntel fee of £7,500 per person a year. Your proposal confirms final pricing."
-            : "Base salaries only, from Glassdoor data (Aug 2026). Choose Full cost above to add on-costs, overheads and AgileIntel's fee."}
+          Indicative annual base salaries from Glassdoor (31 August 2026) and AgileIntel&apos;s
+          recruitment experience. Excludes AgileIntel&apos;s management fee and employer
+          on-costs.
         </p>
 
         <button

@@ -35,8 +35,8 @@ export const Footer: React.FC = () => {
 
             <p className="text-xs text-slate-300 max-w-md leading-relaxed">
               AgileIntel, founded by Dev Mehta, and The Maze, founded by Sandeep Saujani,
-              have formed a strategic partnership to deliver high-performance offshore
-              teams for B2B events and conference organisers across the UK, Europe, and US.
+              have formed a strategic partnership to expand AgileIntel&apos;s presence across
+              Europe.
             </p>
 
             <div className="pt-2 text-[11px] text-[#8fb0f0]">
@@ -83,7 +83,7 @@ export const Footer: React.FC = () => {
           {/* Col 3: India Registered Office */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#8fb0f0] mb-3">
-              India Delivery Centre
+              India Registered Office
             </h4>
             <div className="space-y-2 text-xs text-slate-300">
               <div className="flex items-start gap-2">
@@ -103,7 +103,7 @@ export const Footer: React.FC = () => {
         {/* Organizations Partnered Banner */}
         <div className="py-6 flex flex-wrap items-center justify-between gap-4 text-xs text-slate-400 border-b border-white/10">
           <span className="font-semibold text-slate-300">
-            Organisations The Maze & leadership have worked with:
+            Organisations The Maze has worked with:
           </span>
           <div className="flex flex-wrap gap-4 text-slate-300 font-medium">
             <span>Oxford Global</span>

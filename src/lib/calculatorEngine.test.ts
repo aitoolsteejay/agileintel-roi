@@ -2,17 +2,74 @@ import { describe, it, expect } from "vitest";
 import {
   calculateBusinessImpact,
   calculateTeamEconomics,
-  createMarketResearchAnalystsDemo,
   createRoleFromBenchmark,
   CalculatorState,
   deriveIndiaSalary,
   sanitizeNumber,
 } from "./calculatorEngine";
 import { SALARY_BENCHMARKS } from "../data/benchmarks";
-import {
-  DEFAULT_PRICING_CONFIG,
-  INDICATIVE_MANAGED_MODEL_PRESET,
-} from "./pricingConfig";
+import { AgileIntelPricingConfig, DEFAULT_PRICING_CONFIG } from "./pricingConfig";
+
+/**
+ * Test-only managed pricing, to exercise the engine's full-cost path. These are
+ * NOT AgileIntel's prices (the deck states none) and are never shown to users.
+ */
+const INDICATIVE_MANAGED_MODEL_PRESET: AgileIntelPricingConfig = {
+  mode: "approved_managed_service",
+  indiaEmployerCostPercent: 12.0,
+  annualManagementFeePerPersonGBP: 7500,
+  setupFeePerPersonGBP: 1500,
+  transitionFeeGBP: 2500,
+  pricingVersion: "test-fixture",
+  caveat: "Test fixture only.",
+};
+
+/**
+ * Creates the illustrative Market Research Analysts demo fixture specified in Section 8:
+ * - 3x Market Research Analysts
+ * - UK base salary: £30,000
+ * - India base salary: £18,000
+ * - Total UK base salaries: £90,000
+ * - Total India base salaries: £54,000
+ * - Difference: £36,000 (40% reduction)
+ */
+function createMarketResearchAnalystsDemo(): CalculatorState {
+  const benchmark = SALARY_BENCHMARKS.find(
+    (b) => b.role === "Market Research Analyst"
+  );
+
+  return {
+    country: "United Kingdom",
+    currency: "GBP",
+    hiringSituation: "new_team",
+    roles: [
+      {
+        id: "demo-role-1",
+        roleName: benchmark ? benchmark.role : "Market Research Analyst",
+        function: benchmark ? benchmark.function : "Research & Data",
+        headcount: 3,
+        localAnnualSalary: benchmark ? benchmark.ukSalaryGBP : 30000,
+        isBenchmarkRole: true,
+        benchmarkIndiaSalary: benchmark ? benchmark.indiaSalaryGBP : 18000,
+        customIndiaSalary: benchmark ? benchmark.indiaSalaryGBP : 18000,
+        isSalaryOverridden: false,
+        employerCostType: "percentage",
+        employerCostValue: 15.0,
+        annualOverheadPerPerson: 4500,
+        recruitmentCostPerPerson: 5000,
+      },
+    ],
+    additionalCosts: {
+      annualOffshoreManagementFee: 0,
+      otherAnnualOffshoreCosts: 0,
+      oneTimeOffshoreSetupCost: 4500,
+      oneTimeTransitionCost: 2500,
+      avoidLocalRecruitment: true,
+    },
+    pricingConfig: { ...DEFAULT_PRICING_CONFIG },
+  };
+}
+
 
 describe("AgileIntel Calculator Engine Unit Tests", () => {
   // Test 1: Three UK Market Research Analysts using the deck's benchmark figures

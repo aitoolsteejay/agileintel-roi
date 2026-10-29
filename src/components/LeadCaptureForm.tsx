@@ -68,7 +68,6 @@ export const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({
       calculatorSummary: {
         country: state.country,
         currency: state.currency,
-        hiringSituation: state.hiringSituation,
         headcount: results.totalHeadcount,
         roles: state.roles.map((r) => ({
           role: r.roleName,
@@ -78,13 +77,10 @@ export const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({
           indiaSalary: r.customIndiaSalary ?? r.benchmarkIndiaSalary,
         })),
         financials: {
-          currentAnnualOperatingCost: results.currentAnnualOperatingCost,
-          agileIntelAnnualCost: results.agileIntelAnnualCost,
-          estimatedAnnualSavings: results.annualSavings,
-          costReductionPercent: results.costReductionPercent,
-          salaryOnlyDifference: results.salaryOnlyDifference,
-          firstYearNetSavings: results.firstYearNetSavings,
-          pricingMode: results.pricingMode,
+          currentBaseSalaries: results.totalLocalBaseSalaries,
+          indiaBaseSalaries: results.totalIndiaBaseSalaries,
+          salarySaving: results.salaryOnlyDifference,
+          salarySavingPercent: results.salaryOnlyReductionPercent,
         },
       },
       submittedAt: new Date().toISOString(),
@@ -118,9 +114,9 @@ export const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({
             Get a tailored quote
           </h2>
           <p className="mt-3 text-sm sm:text-base text-[#5b6577]">
-            Tell us about the backend workload for your upcoming events. We&apos;ll
-            review your roles and send a costed proposal with AgileIntel&apos;s actual
-            pricing.
+            Start with a scoping session to map where delivery pressure sits across your
+            event lifecycle. You then get a costed proposal with a side-by-side UK vs India
+            cost comparison for your team.
           </p>
         </Reveal>
 
@@ -134,7 +130,7 @@ export const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({
             </h3>
             <p className="mt-2 text-sm text-[#065f46] leading-relaxed">
               Thank you, <strong>{formData.fullName}</strong>. Sandeep Saujani
-              (The Maze · UK/EU) and Dev Mehta (AgileIntel · India) have received
+              (The Maze · UK, Europe, US) and Dev Mehta (AgileIntel · India delivery) have received
               your team scope for {results.totalHeadcount} headcount.
             </p>
 
@@ -142,7 +138,7 @@ export const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({
             {process.env.NEXT_PUBLIC_CALENDLY_URL ? (
               <div className="mt-6 pt-6 border-t border-[#0d8a56]/20">
                 <p className="text-xs text-[#065f46] mb-3">
-                  Want to skip the wait? Book your 30-minute scoping session directly:
+                  Want to skip the wait? Book your scoping session directly:
                 </p>
                 <a
                   href={process.env.NEXT_PUBLIC_CALENDLY_URL}
@@ -156,8 +152,8 @@ export const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({
               </div>
             ) : (
               <div className="mt-6 pt-6 border-t border-[#0d8a56]/20 text-xs text-[#065f46]">
-                A costed proposal with candidate profiles and specific SLAs will be
-                prepared for your review.
+                Next comes a costed proposal: roles, SLAs, KPIs and a side-by-side UK vs
+                India cost comparison for your team.
               </div>
             )}
           </div>
@@ -276,14 +272,14 @@ export const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({
                   className="text-xs text-[#5b6577] leading-relaxed cursor-pointer"
                 >
                   I consent to AgileIntel Research and The Maze contacting me regarding this
-                  team estimate. We respect your privacy and will never share your details.
+                  team estimate.
                 </label>
               </div>
 
               {/* Submit CTA */}
               <div className="pt-4">
                 <p className="mb-3 text-center text-xs text-[#5b6577]">
-                  Your team setup ({results.totalHeadcount}{" "}
+                  Your team ({results.totalHeadcount}{" "}
                   {results.totalHeadcount === 1 ? "person" : "people"} across{" "}
                   {state.roles.length} {state.roles.length === 1 ? "role" : "roles"}) is
                   sent with your request.

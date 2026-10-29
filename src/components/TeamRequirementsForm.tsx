@@ -10,7 +10,6 @@ import {
 import { SALARY_BENCHMARKS } from "../data/benchmarks";
 import { getCurrencySymbol } from "../lib/formatters";
 import { BenchmarkRoleOptions, ROLE_GRID_COLUMNS, RoleRow } from "./RoleRow";
-import { CostAssumptions } from "./CostAssumptions";
 
 const LOCATIONS: { country: string; currency: CurrencyCode; label: string }[] = [
   { country: "United Kingdom", currency: "GBP", label: "United Kingdom (£)" },
@@ -21,13 +20,11 @@ const LOCATIONS: { country: string; currency: CurrencyCode; label: string }[] = 
 interface TeamRequirementsFormProps {
   state: CalculatorState;
   onChange: (newState: CalculatorState) => void;
-  isManaged: boolean;
 }
 
 export const TeamRequirementsForm: React.FC<TeamRequirementsFormProps> = ({
   state,
   onChange,
-  isManaged,
 }) => {
   const handleCountryChange = (country: string) => {
     const location = LOCATIONS.find((l) => l.country === country) ?? LOCATIONS[0];
@@ -36,24 +33,7 @@ export const TeamRequirementsForm: React.FC<TeamRequirementsFormProps> = ({
 
   const handleAddRole = (roleName: string) => {
     const bm = SALARY_BENCHMARKS.find((b) => b.role === roleName);
-    const newRole = createRoleFromBenchmark(bm);
-    // New roles pick up the team-wide cost assumptions already set
-    const shared = state.roles[0];
-    onChange({
-      ...state,
-      roles: [
-        ...state.roles,
-        shared
-          ? {
-              ...newRole,
-              employerCostType: shared.employerCostType,
-              employerCostValue: shared.employerCostValue,
-              annualOverheadPerPerson: shared.annualOverheadPerPerson,
-              recruitmentCostPerPerson: shared.recruitmentCostPerPerson,
-            }
-          : newRole,
-      ],
-    });
+    onChange({ ...state, roles: [...state.roles, createRoleFromBenchmark(bm)] });
   };
 
   const handleUpdateRole = (index: number, updated: RoleInput) => {
@@ -68,8 +48,7 @@ export const TeamRequirementsForm: React.FC<TeamRequirementsFormProps> = ({
   };
 
   return (
-    <div className="space-y-6">
-      <div className="bg-white rounded-2xl border border-[#d8dee9] p-5 sm:p-6 shadow-sm">
+    <div className="bg-white rounded-2xl border border-[#d8dee9] p-5 sm:p-6 shadow-sm">
         {/* Location (also sets the currency) */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
           <label htmlFor="team-location" className="text-sm font-semibold text-[#1b2433]">
@@ -140,9 +119,6 @@ export const TeamRequirementsForm: React.FC<TeamRequirementsFormProps> = ({
             <option value="custom">Custom role</option>
           </select>
         </div>
-      </div>
-
-      {isManaged && <CostAssumptions state={state} onChange={onChange} />}
     </div>
   );
 };

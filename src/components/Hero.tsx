@@ -36,7 +36,7 @@ export const Hero: React.FC<HeroProps> = ({ onCalculateClick }) => {
         {/* Headline & Subtitle with smooth staggered slide-up */}
         <div className="max-w-3xl animate-slide-up">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.15]">
-            Scale your delivery. <br />
+            Scale your events. <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8fb0f0] via-[#aeb9d0] to-white">
               Not your cost base.
             </span>

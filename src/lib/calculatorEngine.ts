@@ -111,6 +111,10 @@ export function sanitizeNumber(value: unknown, fallback = 0): number {
   return num;
 }
 
+/** Average base salaries across the 24 benchmarked roles, as stated in the deck. */
+export const DECK_AVERAGE_UK_SALARY = 47590;
+export const DECK_AVERAGE_INDIA_SALARY = 24460;
+
 /** India-to-UK salary ratio across all benchmark roles (deck: £24,460 / £47,590). */
 const AVERAGE_INDIA_SALARY_RATIO =
   SALARY_BENCHMARKS.reduce((sum, b) => sum + b.indiaSalaryGBP, 0) /
@@ -146,10 +150,11 @@ export function createRoleFromBenchmark(
       benchmarkIndiaSalary: benchmark.indiaSalaryGBP,
       customIndiaSalary: benchmark.indiaSalaryGBP,
       isSalaryOverridden: false,
+      // Local cost extras aren't in the deck, so none are assumed
       employerCostType: "percentage",
-      employerCostValue: 15.0, // 15% default employer on-cost (NIC + pension)
-      annualOverheadPerPerson: 4500, // Desk, IT, SaaS software seats
-      recruitmentCostPerPerson: 5000, // One-time placement / agency fee
+      employerCostValue: 0,
+      annualOverheadPerPerson: 0,
+      recruitmentCostPerPerson: 0,
     };
   }
 
@@ -158,15 +163,16 @@ export function createRoleFromBenchmark(
     roleName: "Custom Role",
     function: "Research & Data",
     headcount: 1,
-    localAnnualSalary: 45000,
+    // Deck averages across the 24 benchmarked roles
+    localAnnualSalary: DECK_AVERAGE_UK_SALARY,
     isBenchmarkRole: false,
-    benchmarkIndiaSalary: deriveIndiaSalary(45000),
-    customIndiaSalary: deriveIndiaSalary(45000),
+    benchmarkIndiaSalary: DECK_AVERAGE_INDIA_SALARY,
+    customIndiaSalary: DECK_AVERAGE_INDIA_SALARY,
     isSalaryOverridden: false,
     employerCostType: "percentage",
-    employerCostValue: 15.0,
-    annualOverheadPerPerson: 4500,
-    recruitmentCostPerPerson: 5000,
+    employerCostValue: 0,
+    annualOverheadPerPerson: 0,
+    recruitmentCostPerPerson: 0,
   };
 }
 
@@ -180,55 +186,8 @@ export function createDefaultCalculatorState(): CalculatorState {
     additionalCosts: {
       annualOffshoreManagementFee: 0,
       otherAnnualOffshoreCosts: 0,
-      // 0 = use the pricing config (setup scales per person, transition per pod)
       oneTimeOffshoreSetupCost: 0,
       oneTimeTransitionCost: 0,
-      avoidLocalRecruitment: true,
-    },
-    pricingConfig: { ...DEFAULT_PRICING_CONFIG },
-  };
-}
-
-/**
- * Creates the illustrative Market Research Analysts demo fixture specified in Section 8:
- * - 3x Market Research Analysts
- * - UK base salary: £30,000
- * - India base salary: £18,000
- * - Total UK base salaries: £90,000
- * - Total India base salaries: £54,000
- * - Difference: £36,000 (40% reduction)
- */
-export function createMarketResearchAnalystsDemo(): CalculatorState {
-  const benchmark = SALARY_BENCHMARKS.find(
-    (b) => b.role === "Market Research Analyst"
-  );
-
-  return {
-    country: "United Kingdom",
-    currency: "GBP",
-    hiringSituation: "new_team",
-    roles: [
-      {
-        id: "demo-role-1",
-        roleName: benchmark ? benchmark.role : "Market Research Analyst",
-        function: benchmark ? benchmark.function : "Research & Data",
-        headcount: 3,
-        localAnnualSalary: benchmark ? benchmark.ukSalaryGBP : 30000,
-        isBenchmarkRole: true,
-        benchmarkIndiaSalary: benchmark ? benchmark.indiaSalaryGBP : 18000,
-        customIndiaSalary: benchmark ? benchmark.indiaSalaryGBP : 18000,
-        isSalaryOverridden: false,
-        employerCostType: "percentage",
-        employerCostValue: 15.0,
-        annualOverheadPerPerson: 4500,
-        recruitmentCostPerPerson: 5000,
-      },
-    ],
-    additionalCosts: {
-      annualOffshoreManagementFee: 0,
-      otherAnnualOffshoreCosts: 0,
-      oneTimeOffshoreSetupCost: 4500,
-      oneTimeTransitionCost: 2500,
       avoidLocalRecruitment: true,
     },
     pricingConfig: { ...DEFAULT_PRICING_CONFIG },
@@ -338,7 +297,7 @@ export function calculateTeamEconomics(state: CalculatorState): CalculationResul
   // One-time offshore costs
   const setupPerPerson = sanitizeNumber(
     state.pricingConfig.setupFeePerPersonGBP,
-    1500
+    0
   );
   const totalSetupCost =
     state.additionalCosts.oneTimeOffshoreSetupCost > 0
@@ -348,7 +307,7 @@ export function calculateTeamEconomics(state: CalculatorState): CalculationResul
   const totalTransitionCost =
     state.additionalCosts.oneTimeTransitionCost > 0
       ? state.additionalCosts.oneTimeTransitionCost
-      : sanitizeNumber(state.pricingConfig.transitionFeeGBP, 2500);
+      : sanitizeNumber(state.pricingConfig.transitionFeeGBP, 0);
 
   const totalOffshoreOneTimeCost = totalSetupCost + totalTransitionCost;
 

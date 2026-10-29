@@ -4,7 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "AgileIntel Research | Offshore Team Savings & Capacity Calculator",
   description:
-    "Scale your delivery, not your cost base. Interactive ROI and delivery capacity calculator for B2B events and conference organisers, powered by AgileIntel Research in partnership with The Maze.",
+    "Scale your events, not your cost base. Salary savings calculator for B2B events and conference organisers, from AgileIntel Research in partnership with The Maze.",
   keywords: [
     "AgileIntel",
     "AgileIntel Research",
